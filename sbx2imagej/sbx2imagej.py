@@ -1,13 +1,13 @@
-from logging import PlaceHolder
+
 from pathlib import Path
 
 import imagej
 import numpy as np
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QFileDialog, QApplicationg
+from PyQt5.QtWidgets import QFileDialog, QApplication
 from sbxreader import sbx_get_metadata, sbx_memmap
-from itertools import chain
+
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -87,7 +87,7 @@ class Ui_Dialog(object):
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
-        self.directory = '/media/amsalem/HDD/santiago/OAM3/201106_OAM3/201106_OAM3_001'
+        self.directory = None
         self.ij = None
         
         self.Dialog = Dialog
