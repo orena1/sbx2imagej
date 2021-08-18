@@ -1,3 +1,4 @@
+from logging import PlaceHolder
 from pathlib import Path
 
 import imagej
@@ -6,10 +7,13 @@ from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QFileDialog
 from sbxreader import sbx_get_metadata, sbx_memmap
-
+from itertools import chain
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
+        '''
+        create the gui
+        '''
         Dialog.setObjectName("Dialog")
         Dialog.resize(378, 252)
         self.FileName = QtWidgets.QLabel(Dialog)
@@ -104,7 +108,9 @@ class Ui_Dialog(object):
 
 
     def set_metadata(self):
-        print(self.filepath)
+        '''
+        Sets the gui metadata from the sbxinfo
+        '''
 
         
         self.directory = str(Path(self.filepath).parent)
@@ -123,11 +129,12 @@ class Ui_Dialog(object):
         self.FileName.setText(self.filename)
         self.ToImageJ.setEnabled(True)
 
-
         return
 
     def load_file(self):
-
+        '''
+        Load file dialog
+        '''
         dlg = QFileDialog()
 
         self.filepath = dlg.getOpenFileName(self.Dialog, 'Open File', self.directory, "SBX Files (*.sbx)")[0]
@@ -136,45 +143,52 @@ class Ui_Dialog(object):
         self.progressBar.hide()
         self.Info.setText("")
 
-    def show_imagej(self):
-        progress_bar = 1
 
-        
+    def show_imagej(self):
+        '''
+        Main function that load the sbx file and transfer it to imagej
+        '''
+        progress_bar = 1 # TODO: add the ability to not show the progress bar      
+        load_step = 50 # TODO: think about a better heuristic for load_step
 
         self.Info.setText("loading sbx file, please wait...")
         sbx_dat = sbx_memmap(self.filepath)
 
+        #load file to numpy array
         frame_st = int(self.Frames_start.text())
         frame_en = int(self.Frames_end.text())
+        
         if progress_bar:
+            loaded_data = np.zeros((frame_en-frame_st, int(self.Planes.text()), int(self.Channels.text()), int(self.Height.text()), int(self.Width.text())))
             self.progressBar.show()
-            loaded_data = []
-            for ind in range(frame_st,frame_en):#chunking did increase speed
+            for ind in range(frame_st,frame_en,load_step):
                 self.progressBar.setValue(max(ind-3,0)/(frame_en-frame_st)*100)
-                loaded_data.append(sbx_dat[ind])
+                loaded_data[ind:min(ind+load_step,frame_en)] = sbx_dat[ind:min(ind+load_step,frame_en)]
             
             self.Info.setText('change datatype')
             self.Info.repaint()
-            loaded_data = np.array(loaded_data)
             self.progressBar.setValue(98)
         else:
             loaded_data = sbx_dat[frame_st:frame_en]
         
-
         self.Info.setText('finished loading sbx, loading imagej')
         self.Info.repaint()
+
         if self.ij==None:
             self.ij = imagej.init('net.imagej:imagej:2.2.0+net.imglib2:imglib2-unsafe:0.4.1',headless=False)
             self.ij.ui().showUI()
             self.progressBar.setValue(99)
         self.Info.setText("mirroring data to image, please wait")
         self.Info.repaint()
-        print(self.filename)
-
+        
+        #convert to imagej
         self.ij.ui().show(self.filename, self.ij.py.to_java(loaded_data))
         self.Info.setText("Done")
         self.progressBar.setValue(100)
-if __name__ == '__main__':
+
+
+
+def main():
     app = QtWidgets.QApplication([])
     Dialog = QtWidgets.QDialog()
     ut = Ui_Dialog()
@@ -186,5 +200,8 @@ if __name__ == '__main__':
 
     Dialog.show()
     app.exec()
+
+if __name__ == '__main__':
+    main()
 
 
