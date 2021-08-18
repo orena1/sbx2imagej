@@ -5,7 +5,7 @@ import imagej
 import numpy as np
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QFileDialog, QApplicationg
 from sbxreader import sbx_get_metadata, sbx_memmap
 from itertools import chain
 
@@ -163,6 +163,7 @@ class Ui_Dialog(object):
             self.progressBar.show()
             for ind in range(frame_st,frame_en,load_step):
                 self.progressBar.setValue(max(ind-3,0)/(frame_en-frame_st)*100)
+                QApplication.processEvents()
                 loaded_data[ind:min(ind+load_step,frame_en)] = sbx_dat[ind:min(ind+load_step,frame_en)]
             
             self.Info.setText('change datatype')
