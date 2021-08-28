@@ -149,10 +149,12 @@ class Ui_Dialog(object):
         Main function that load the sbx file and transfer it to imagej
         '''
         progress_bar = 1 # TODO: add the ability to not show the progress bar      
-        load_step = 50 # TODO: think about a better heuristic for load_step
-
+        
         self.Info.setText("loading sbx file, please wait...")
         sbx_dat = sbx_memmap(self.filepath)
+
+        load_step = min(50,sbx_dat.shape[0]) # TODO: think about a better heuristic for load_step
+
 
         #load file to numpy array
         frame_st = int(self.Frames_start.text())
