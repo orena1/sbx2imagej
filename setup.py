@@ -20,14 +20,14 @@ Source code is in [the repository](https://github.com/orena1/sbx2imagej.git)
 
 setup(
     name = 'sbx2imagej',
-    version = '0.0.2',
+    version = '0.0.4',
     author = 'Oren Amsalem',
     author_email = 'oren.a4@gmail.com',
     description = "...",
     long_description = longdescription,
     long_description_content_type='text/markdown',
     license = 'GPL',
-    install_requires = ['scipy','sbxreader','pyimagej'],
+    install_requires = ['scipy', 'sbxreader', 'pyimagej', 'PyQt5'],
     url = "https://github.com/orena1/sbx2imagej",
     packages = ['sbx2imagej'],
     entry_points = {

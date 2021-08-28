@@ -153,20 +153,21 @@ class Ui_Dialog(object):
         self.Info.setText("loading sbx file, please wait...")
         sbx_dat = sbx_memmap(self.filepath)
 
-        load_step = min(50,sbx_dat.shape[0]) # TODO: think about a better heuristic for load_step
 
 
         #load file to numpy array
         frame_st = int(self.Frames_start.text())
         frame_en = int(self.Frames_end.text())
-        
+
+        load_step = min(50,sbx_dat.shape[0],frame_en-frame_st) # TODO: think about a better heuristic for load_step
+
         if progress_bar:
             loaded_data = np.zeros((frame_en-frame_st, int(self.Planes.text()), int(self.Channels.text()), int(self.Height.text()), int(self.Width.text())))
             self.progressBar.show()
-            for ind in range(frame_st,frame_en,load_step):
-                self.progressBar.setValue(max(ind-3,0)/(frame_en-frame_st)*100)
+            for j,ind in enumerate(range(frame_st,frame_en,load_step)):
+                self.progressBar.setValue(max(j*load_step-3,0)/(frame_en-frame_st)*100)
                 QApplication.processEvents()
-                loaded_data[ind:min(ind+load_step,frame_en)] = sbx_dat[ind:min(ind+load_step,frame_en)]
+                loaded_data[j*load_step:min((j+1)*load_step, loaded_data.shape[0])] = sbx_dat[ind:min(ind+load_step,frame_en)]
             
             self.Info.setText('change datatype')
             self.Info.repaint()
