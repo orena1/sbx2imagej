@@ -17,7 +17,7 @@ class Ui_Dialog(object):
         Dialog.setObjectName("Dialog")
         Dialog.resize(378, 252)
         self.FileName = QtWidgets.QLabel(Dialog)
-        self.FileName.setGeometry(QtCore.QRect(0, 0, 221, 20))
+        self.FileName.setGeometry(QtCore.QRect(5, 3, 221, 20))
         self.FileName.setObjectName("FileName")
         self.ToImageJ = QtWidgets.QPushButton(Dialog)
         self.ToImageJ.setGeometry(QtCore.QRect(10, 200, 101, 28))
@@ -137,7 +137,7 @@ class Ui_Dialog(object):
         '''
         dlg = QFileDialog()
 
-        self.filepath = dlg.getOpenFileName(self.Dialog, 'Open File', self.directory, "SBX Files (*.sbx)")[0]
+        self.filepath = dlg.getOpenFileName(self.Dialog, 'Choose an sbx file to load to ImageJ', self.directory, "SBX Files (*.sbx)")[0]
 
         self.set_metadata()
         self.progressBar.hide()
