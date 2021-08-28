@@ -8,7 +8,7 @@ open console and write:
 
 `sbx2image`
 
-![](sbx2image_example.gif)
+![](sbx2imagej_example.gif)
 
 
 ## Installation
