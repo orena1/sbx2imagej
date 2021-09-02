@@ -22,7 +22,7 @@ pip install sbx2imagej
 [read more](https://github.com/imagej/pyimagej/blob/master/doc/Install.md) about pyimagej installation
 
 ---
-Note that the first time that you load an sbx file to imagej will take some time as it will need to set up pyimagej enviorment.
+Note! First time loading an sbx file to imagej will take a couple of minutes to set up pyimagej enviorment.
 
 
 
