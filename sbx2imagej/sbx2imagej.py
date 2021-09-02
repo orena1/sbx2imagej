@@ -1,15 +1,61 @@
 
+import os
 from pathlib import Path
 
 import imagej
 import numpy as np
+import configparser
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QFileDialog, QApplication
+from PyQt5.QtWidgets import QApplication, QFileDialog
 from sbxreader import sbx_get_metadata, sbx_memmap
 
 
 class Ui_Dialog(object):
+    def load_ini(self):
+        '''
+        Load/Create ini settings file
+        '''
+        self.ini_path = Path(os.path.expanduser("~") + "/.config/sbx2imagej.ini")
+        try:
+            if not os.path.isfile(self.ini_path):
+                os.makedirs(self.ini_path.parent, exist_ok=True)
+                config = configparser.ConfigParser()
+                config.add_section('settings')
+                config['settings']['imagej'] = 'default'
+                config['settings']['directory'] = 'None'
+                config['settings']['first_run'] = 'yes'
+                with open(self.ini_path, 'w') as f:
+                    config.write(f)
+            
+            config = configparser.ConfigParser()
+            config.read(self.ini_path)
+            self.directory = None if config['settings']['directory'] == 'None' else config['settings']['directory']
+            self.ij = None if config['settings']['imagej'] == 'default' else config['settings']['imagej']
+            self.first_run = config['settings']['first_run']
+        except Exception as e:
+            #print(e)
+            print("Could not Read/save settings")
+            self.directory = None
+            self.ij = None
+            self.ij = 'no'
+
+    def save_config(self, ij=[], directory=[], first_run = []):
+        try:
+            config = configparser.ConfigParser()
+            config.read(self.ini_path)
+            if ij != []:
+                config['settings']['imagej'] = ij
+            if directory != []:
+                config['settings']['directory'] = directory
+            if first_run != []:
+                config['settings']['first_run'] = 'no'
+            with open(self.ini_path, 'w') as f:
+                config.write(f)
+        except:
+            print("Could not read/Save settings")
+
+
     def setupUi(self, Dialog):
         '''
         create the gui
@@ -38,10 +84,11 @@ class Ui_Dialog(object):
         self.progressBar.setObjectName("progressBar")
 
         self.Info = QtWidgets.QLabel(Dialog)
-        self.Info.setGeometry(QtCore.QRect(10, 230, 341, 20))
+        self.Info.setGeometry(QtCore.QRect(10, 227, 361, 25))
         self.Info.setText("")
         self.Info.setObjectName("Info")
-        
+        self.Info.setAlignment(QtCore.Qt.AlignTop)
+
         self.widget = QtWidgets.QWidget(Dialog)
         self.widget.setGeometry(QtCore.QRect(10, 30, 351, 165))
         self.widget.setObjectName("widget")
@@ -115,12 +162,10 @@ class Ui_Dialog(object):
         #self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
-        self.directory = None
-        self.ij = None
+
         
         self.Dialog = Dialog
         Dialog.setWindowTitle("SBX to ImageJ")
-
 
     def set_metadata(self):
         '''
@@ -144,6 +189,7 @@ class Ui_Dialog(object):
         self.FileName.setText(self.filename)
         self.ToImageJ.setEnabled(True)
 
+        self.save_config(directory=self.directory)
         return
 
     def load_file(self):
@@ -192,6 +238,9 @@ class Ui_Dialog(object):
         
         self.Info.setText('Loading ImageJ, please wait...')
         self.Info.repaint()
+        if self.first_run == 'yes':
+            self.Info.setText('First initialization! Will take a few minutes...')
+            self.Info.repaint()
 
         if self.ij==None:
             self.ij = imagej.init('net.imagej:imagej:2.2.0+net.imglib2:imglib2-unsafe:0.4.1',headless=False)
@@ -205,12 +254,15 @@ class Ui_Dialog(object):
         self.Info.setText("Done")
         self.progressBar.setValue(100)
 
+        self.save_config(first_run='no')
+
 
 
 def main():
     app = QtWidgets.QApplication([])
     Dialog = QtWidgets.QDialog()
     ut = Ui_Dialog()
+    ut.load_ini()
     ut.setupUi(Dialog)
 
     ut.ToImageJ.clicked.connect(ut.show_imagej)
@@ -222,5 +274,4 @@ def main():
 
 if __name__ == '__main__':
     main()
-
 
