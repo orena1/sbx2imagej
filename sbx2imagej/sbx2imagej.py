@@ -220,15 +220,15 @@ class Ui_Dialog(object):
         frame_st = int(self.Frames_start.text())
         frame_en = int(self.Frames_end.text())
 
-        load_step = min(50,sbx_dat.shape[0],frame_en-frame_st) # TODO: think about a better heuristic for load_step
+        step_size = int((frame_en-frame_st)/20) 
 
         if progress_bar:
             loaded_data = np.zeros((frame_en-frame_st, int(self.Planes.text()), int(self.Channels.text()), int(self.Height.text()), int(self.Width.text())))
             self.progressBar.show()
-            for j,ind in enumerate(range(frame_st,frame_en,load_step)):
-                self.progressBar.setValue(max(j*load_step-3,0)/(frame_en-frame_st)*100)
+            for j,ind in enumerate(range(frame_st,frame_en,step_size)):
+                self.progressBar.setValue(max(j*step_size-3,0)/(frame_en-frame_st)*100)
                 QApplication.processEvents()
-                loaded_data[j*load_step:min((j+1)*load_step, loaded_data.shape[0])] = sbx_dat[ind:min(ind+load_step,frame_en)]
+                loaded_data[j*step_size:min((j+1)*step_size, loaded_data.shape[0])] = sbx_dat[ind:min(ind+step_size,frame_en)]
             
             self.Info.setText('Changing datatype')
             self.Info.repaint()
