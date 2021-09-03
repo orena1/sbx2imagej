@@ -6,7 +6,7 @@ sbx2imagej, is a wrapper between [sbxreader](https://github.com/jcouto/sbxreader
 
 open console and write:
 
-`sbx2image`
+`sbx2imagej`
 
 ![](sbx2imagej_example.gif)
 
