@@ -197,8 +197,9 @@ class Ui_Dialog(object):
         Load file dialog
         '''
         dlg = QFileDialog()
-
-        self.filepath = dlg.getOpenFileName(self.Dialog, 'Choose an sbx file to load to ImageJ', self.directory, "SBX Files (*.sbx)")[0]
+        self.filepath = ''
+        while not self.filepath.endswith('sbx'):
+            self.filepath = dlg.getOpenFileName(self.Dialog, 'Choose an sbx file to load to ImageJ', self.directory, "SBX Files (*.sbx)")[0]
 
         self.set_metadata()
         self.progressBar.hide()
