@@ -20,7 +20,7 @@ Source code is in [the repository](https://github.com/orena1/sbx2imagej.git)
 
 setup(
     name = 'sbx2imagej',
-    version = '0.0.6',
+    version = '0.0.7',
     author = 'Oren Amsalem',
     author_email = 'oren.a4@gmail.com',
     description = "...",

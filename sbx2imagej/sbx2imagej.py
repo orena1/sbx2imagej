@@ -198,8 +198,8 @@ class Ui_Dialog(object):
         '''
         dlg = QFileDialog()
         self.filepath = ''
-        while not self.filepath.endswith('sbx'):
-            self.filepath = dlg.getOpenFileName(self.Dialog, 'Choose an sbx file to load to ImageJ', self.directory, "SBX Files (*.sbx)")[0]
+        while not 'sbx' in self.filepath:
+            self.filepath = dlg.getOpenFileName(self.Dialog, 'Choose an sbx file to load to ImageJ', self.directory, "SBX Files (*.sbx*)")[0]
 
         self.set_metadata()
         self.progressBar.hide()
@@ -244,7 +244,7 @@ class Ui_Dialog(object):
             self.Info.repaint()
 
         if self.ij==None:
-            self.ij = imagej.init('net.imagej:imagej:2.2.0+net.imglib2:imglib2-unsafe:0.4.1',headless=False)
+            self.ij = imagej.init('sc.fiji:fiji',mode='interactive')
             self.ij.ui().showUI()
             self.progressBar.setValue(99)
         self.Info.setText("Mirroring data to ImageJ")
