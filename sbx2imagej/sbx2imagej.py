@@ -38,7 +38,7 @@ class Ui_Dialog(object):
             print("Could not Read/save settings")
             self.directory = None
             self.ij = None
-            self.ij = 'no'
+            self.first_run = 'no'
 
     def save_config(self, ij=[], directory=[], first_run = []):
         try:
